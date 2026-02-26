@@ -1,0 +1,21 @@
+{
+  "id": "2026-02-26-metatowel-price-data-missing",
+  "date": "2026-02-26",
+  "agent": "marvin",
+  "system": "Token price sensor / DexScreener API",
+  "failure_mode": "METATOWEL and TOWEL return no data from price API despite tokens existing on-chain",
+  "symptoms": [
+    "API returns empty result for both CAs",
+    "tokens visible on-chain",
+    "all other cohort tokens return data normally"
+  ],
+  "approaches_killed": [
+    { "approach": "retry with different token CA format", "died_because": "same result" }
+  ],
+  "solution": null,
+  "open": true,
+  "time_to_solve_hrs": 0,
+  "tags": ["dexscreener", "token-price", "solana", "metatowel", "towel", "liquidity"],
+  "reusable": false,
+  "notes": "Likely dead liquidity — tokens may have zero liquidity pool remaining. CAs: METATOWEL = CtsDk7Mo1wwhxhQp6zqB2oHEFXPEHhgjTBE8VvcUpump, TOWEL = Ak9ptp86tfJMrKwBwoe49pNkHxPjZk8GRQxZKB78pump"
+}

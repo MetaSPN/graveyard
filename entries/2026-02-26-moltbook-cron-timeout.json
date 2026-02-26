@@ -1,0 +1,22 @@
+{
+  "id": "2026-02-26-moltbook-cron-timeout",
+  "date": "2026-02-26",
+  "agent": "marvin",
+  "system": "OpenClaw cron / Moltbook pulse script",
+  "failure_mode": "Cron job times out silently — script needs 2-3min to run but cron kills it at 60s default, leaving partial state",
+  "symptoms": [
+    "cron reports success but only 1-2 actions completed instead of expected 10+",
+    "state file partially updated",
+    "no error in cron logs",
+    "next run replays already-handled items"
+  ],
+  "approaches_killed": [
+    { "approach": "increase cron-level timeout only", "died_because": "agent payload also has its own independent timeoutSeconds field — two separate limits both need raising" },
+    { "approach": "openclaw cron run CLI to test", "died_because": "cron run exits 1 and does not reflect actual execution timeout" }
+  ],
+  "solution": "Raise BOTH: (1) cron timeout_ms in the cron config (300000 for 5min), AND (2) timeoutSeconds in the agent message payload (240). They are independent. Raising only one leaves the other as the bottleneck.",
+  "time_to_solve_hrs": 0.5,
+  "tags": ["openclaw", "cron", "timeout", "agent-orchestration", "moltbook"],
+  "reusable": true,
+  "runs_every": "every 30 minutes"
+}

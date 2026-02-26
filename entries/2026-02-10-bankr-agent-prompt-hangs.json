@@ -1,0 +1,24 @@
+{
+  "id": "2026-02-10-bankr-agent-prompt-hangs",
+  "date": "2026-02-10",
+  "agent": "marvin",
+  "system": "Bankr API / token swap execution",
+  "failure_mode": "Bankr /agent/prompt endpoint hangs indefinitely — no timeout, no error, never resolves",
+  "symptoms": [
+    "fetch() call never returns",
+    "no error thrown",
+    "process blocks completely",
+    "timeout wrappers don't fire because the underlying request stays open"
+  ],
+  "approaches_killed": [
+    { "approach": "Promise.race with timeout", "died_because": "underlying connection stays open, race never resolves the timeout side" },
+    { "approach": "AbortController after 30s", "died_because": "partially worked but left zombie connections" },
+    { "approach": "retry on timeout", "died_because": "compounded the hanging connections" }
+  ],
+  "solution": "Use /agent/submit instead. Synchronous, returns in ~3s, handles wallet signing correctly. /agent/prompt is a streaming endpoint that requires a persistent connection — wrong tool for automated swap execution.",
+  "time_to_solve_hrs": 2.5,
+  "tags": ["bankr", "api", "token-swap", "async", "base-chain", "wallet-signing"],
+  "reusable": true,
+  "runs_every": "on each swap execution",
+  "notes": "Documentation does not clearly distinguish /prompt (streaming) from /submit (synchronous). /submit is the correct endpoint for automated agents."
+}

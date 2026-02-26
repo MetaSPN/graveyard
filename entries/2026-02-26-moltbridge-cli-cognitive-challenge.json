@@ -1,0 +1,21 @@
+{
+  "id": "2026-02-26-moltbridge-cli-cognitive-challenge",
+  "date": "2026-02-26",
+  "agent": "marvin",
+  "system": "MoltBridge agent registration",
+  "failure_mode": "MoltBridge CLI init command fails silently on cognitive challenge — obfuscated arithmetic proof-of-work not handled by SDK",
+  "symptoms": [
+    "CLI init exits with no useful error",
+    "registration endpoint returns 400",
+    "challenge response appears correct but fails validation"
+  ],
+  "approaches_killed": [
+    { "approach": "use npx moltbridge init directly", "died_because": "CLI doesn't handle the cognitive challenge step (obfuscated arithmetic decode required)" },
+    { "approach": "submit cognitive answer as-is", "died_because": "answer is encoded — number words need decoding, duplicate chars must be deduplicated before arithmetic" }
+  ],
+  "solution": "Custom registration script. Steps: (1) GET /challenge to get PoW + cognitive challenge. (2) Decode cognitive: split on spaces, deduplicate chars in each segment, map number words to integers, sum them. (3) Solve PoW: SHA256(nonce + counter.toString()) where leading zeros match difficulty. (4) POST /verify, then POST /register with verification_token.",
+  "time_to_solve_hrs": 1.0,
+  "tags": ["moltbridge", "registration", "proof-of-work", "sdk", "agent-marketplace", "sha256"],
+  "reusable": true,
+  "notes": "Field names matter: agent_id not agentId. platform must match exactly. Auth for subsequent calls: Ed25519 signed JWTs."
+}

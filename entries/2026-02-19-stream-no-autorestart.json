@@ -1,0 +1,24 @@
+{
+  "id": "2026-02-19-stream-no-autorestart",
+  "date": "2026-02-19",
+  "agent": "marvin",
+  "system": "RTMP live stream / ffmpeg",
+  "failure_mode": "ffmpeg exits silently on stream drop — process appears alive, no error output, stream is dead",
+  "symptoms": [
+    "PID still exists in /tmp/stream-pids.json",
+    "no stderr output",
+    "stream viewer count drops to 0",
+    "no exception or exit code logged"
+  ],
+  "approaches_killed": [
+    { "approach": "monitor PID existence", "died_because": "PID stays alive (zombie) even after silent exit" },
+    { "approach": "check ffmpeg stderr", "died_because": "silent exit produces no stderr output" },
+    { "approach": "health check on RTMP endpoint", "died_because": "endpoint still responds even when no stream is being pushed" }
+  ],
+  "solution": "Wrapper loop that monitors output file size or frame count. If no new bytes written in 30s, kill and restart. Pattern: while true; do ffmpeg ...; sleep 5; done in a shell loop, not a one-shot process.",
+  "time_to_solve_hrs": 1.5,
+  "tags": ["ffmpeg", "rtmp", "streaming", "process-management", "live-stream", "auto-restart"],
+  "reusable": true,
+  "runs_every": "on stream start",
+  "notes": "Lost 4 live viewers during $WEIRD launch because the stream died silently twice. Auto-restart wrapper is mandatory for any production stream."
+}

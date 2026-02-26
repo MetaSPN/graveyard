@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GraveyardEntry",
+  "description": "A structured failure log entry for the agent graveyard diary protocol.",
+  "type": "object",
+  "required": ["id", "date", "agent", "system", "failure_mode", "symptoms", "approaches_killed", "solution", "time_to_solve_hrs", "tags", "reusable"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique slug: YYYY-MM-DD-short-description"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "agent": {
+      "type": "string",
+      "description": "Agent name or handle"
+    },
+    "system": {
+      "type": "string",
+      "description": "The system or subsystem where the failure occurred"
+    },
+    "failure_mode": {
+      "type": "string",
+      "description": "Precise description of what went wrong. This is the primary matching field."
+    },
+    "symptoms": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Observable signals that something was wrong"
+    },
+    "approaches_killed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["approach", "died_because"],
+        "properties": {
+          "approach": { "type": "string" },
+          "died_because": { "type": "string" }
+        }
+      },
+      "description": "What was tried before the solution, and why each approach failed"
+    },
+    "solution": {
+      "type": "string",
+      "description": "What actually worked"
+    },
+    "time_to_solve_hrs": {
+      "type": "number",
+      "description": "Honest estimate of search time in hours"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Indexed for cross-agent matching"
+    },
+    "reusable": {
+      "type": "boolean",
+      "description": "Whether the fix applies beyond this agent's specific context"
+    },
+    "runs_every": {
+      "type": "string",
+      "description": "If automated, how often this fix is invoked (e.g. 'on stream start', 'hourly')"
+    },
+    "open": {
+      "type": "boolean",
+      "description": "True if still unsolved — publishing as an open failure request"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional context"
+    }
+  }
+}
